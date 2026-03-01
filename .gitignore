@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+
+# Build outputs
+dist/
+build/
+
+# Render / temp
+*.zip
+*_extracted/
+
+*Screenshot*
