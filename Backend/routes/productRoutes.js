@@ -31,12 +31,28 @@ router.post('/api/analyze', async (req, res) => {
         const linesOfCode = await locAnalysis(repoPath);
         const complexity = await complexityAnalysis(repoPath);
 
-        const repoResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}`);
+        const repoResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}`, {
+            headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`
+            }
+        });
         const repoData = repoResponse.data;
 
-        const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/commits`);
-        const pullResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/pulls?state=all`);
-        const issuesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/issues?state=all`);
+        const commitsResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/commits`, {
+            headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`
+            }
+        });
+        const pullResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/pulls?state=all`, {
+            headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`
+            }
+        });
+        const issuesResponse = await axios.get(`https://api.github.com/repos/${owner}/${repoName}/issues?state=all`, {
+            headers: {
+                Authorization: `token ${process.env.GITHUB_TOKEN}`
+            }
+        });
 
         const starsScore = Math.log10(repoData.stargazers_count + 1) / Math.log10(100000); 
         const forksScore = Math.log10(repoData.forks_count + 1) / Math.log10(50000);
