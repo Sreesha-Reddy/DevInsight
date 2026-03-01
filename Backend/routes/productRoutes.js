@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const Repo = require('../models/repoModel');
+const Repo = require('../models/temp');
 
 const {analyzeCodeQuality} = require('../services/CodeQualityService');
 const { repoExtraction } = require('../services/RepoExtraction');
