@@ -1,0 +1,24 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    image: sreesha19/my_projects:devinsight-backend-latest
+    container_name: devinsight-backend
+    env_file:
+      - ./Backend/.env
+    ports:
+      - "5500:5500"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: sreesha19/my_projects:devinsight-frontend-latest
+    container_name: devinsight-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    restart: unless-stopped
