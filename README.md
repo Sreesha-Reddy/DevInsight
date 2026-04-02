@@ -6,7 +6,7 @@ DevInsight is a full-stack repository analytics platform that evaluates public G
 
 The system integrates with the GitHub REST API to retrieve real-time repository data and leverages ESLint-based static analysis to evaluate code quality. It applies weighted scoring algorithms to compute normalized performance metrics and persists analyzed results in a cloud-hosted MongoDB database.
 
-The project demonstrates production-ready full-stack architecture, secure API authentication, static code analysis integration, and end-to-end cloud deployment.
+The project demonstrates production-ready full-stack architecture, secure API authentication, static code analysis integration, containerized deployment, and automated CI/CD pipelines.
 
 ---
 
@@ -41,6 +41,8 @@ DevInsight addresses this by:
 - Persistent storage of analyzed repositories
 - Authenticated GitHub API integration to handle rate limits
 - Cloud-based deployment architecture
+- Containerized services via Docker
+- Automated CI/CD pipeline via GitHub Actions
 
 ---
 
@@ -87,13 +89,33 @@ This balanced approach ensures that both activity and maintainability are consid
 ## System Architecture
 
 User  
-→ Frontend Application (React + Vite)  
-→ Backend API (Node.js + Express)  
+→ Frontend Application (React + Vite) [Dockerized with Nginx]  
+→ Backend API (Node.js + Express) [Dockerized]  
 → GitHub REST API (Authenticated Requests)  
 → ESLint Static Analysis Engine  
 → MongoDB Atlas (Cloud Database)  
 
 The backend acts as a processing layer that aggregates GitHub data, performs static analysis, computes analytics, and stores structured results.
+
+---
+
+## CI/CD Pipeline
+
+DevInsight uses a **GitHub Actions** CI/CD pipeline that triggers automatically on every push and pull request to `main`.
+
+### Pipeline Stages
+
+1. **Install Dependencies** — npm install for both Frontend and Backend
+2. **Lint** — ESLint runs on Frontend to enforce code quality
+3. **Build** — Vite production build for Frontend
+4. **Docker Build** — Docker images built and validated for both services
+
+### Key Design Decisions
+
+- Frontend uses a **multi-stage Docker build** — Node.js builds the React app, Nginx serves the static output — reducing final image size by 10x
+- Backend image uses a lightweight `node:18-alpine` base
+- Pipeline jobs are separated: `build-and-test` must pass before `docker-build` runs
+- `continue-on-error` is used on Backend lint/build since Express apps have no build step
 
 ---
 
@@ -115,6 +137,11 @@ The backend acts as a processing layer that aggregates GitHub data, performs sta
 ### Database
 - MongoDB Atlas (Cloud-hosted NoSQL database)
 
+### DevOps
+- Docker (Containerization)
+- GitHub Actions (CI/CD Pipeline)
+- Nginx (Frontend static file serving)
+
 ### Deployment
 - Render (Backend Web Service + Frontend Static Site)
 
@@ -126,6 +153,9 @@ The backend acts as a processing layer that aggregates GitHub data, performs sta
 ## Engineering Highlights
 
 - Static code analysis integration using ESLint
+- Containerized frontend and backend using Docker
+- Multi-stage Docker build for React frontend with Nginx
+- Automated CI/CD pipeline using GitHub Actions
 - Production deployment on a Linux-based cloud environment
 - Case-sensitive module resolution debugging
 - Secure environment variable management
@@ -138,4 +168,4 @@ The backend acts as a processing layer that aggregates GitHub data, performs sta
 
 ## Conclusion
 
-DevInsight demonstrates a complete full-stack analytical system integrating external APIs, static code analysis, cloud infrastructure, database persistence, and algorithmic scoring techniques. The project reflects practical engineering considerations including API authentication, rate limit handling, production debugging, and deployment configuration.
+DevInsight demonstrates a complete full-stack analytical system integrating external APIs, static code analysis, containerized deployment, automated CI/CD pipelines, cloud infrastructure, database persistence, and algorithmic scoring techniques. The project reflects practical engineering considerations including API authentication, rate limit handling, Docker containerization, GitHub Actions automation, production debugging, and deployment configuration.
