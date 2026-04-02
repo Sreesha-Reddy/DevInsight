@@ -1,0 +1,75 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      # Backend
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: ./Backend
+
+      - name: Lint Backend
+        run: npm run lint --if-present
+        working-directory: ./Backend
+        continue-on-error: true
+
+      - name: Build Backend
+        run: npm run build --if-present
+        working-directory: ./Backend
+        continue-on-error: true
+
+      # Frontend
+      - name: Install Frontend Dependencies
+        run: npm install
+        working-directory: ./Frontend
+
+      - name: Lint Frontend
+        run: npm run lint --if-present
+        working-directory: ./Frontend
+        continue-on-error: true
+
+      - name: Build Frontend
+        run: npm run build
+        working-directory: ./Frontend
+
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Backend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./Backend
+          file: ./Backend/Dockerfile
+          push: false
+          tags: devinsight-backend:latest
+
+      - name: Build Frontend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./Frontend
+          file: ./Frontend/Dockerfile
+          push: false
+          tags: devinsight-frontend:latest
