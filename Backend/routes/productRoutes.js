@@ -53,6 +53,20 @@ router.post("/api/analyze", async (req, res) => {
         headers: githubHeaders,
       },
     );
+
+    const lastPushed = new Date(repoResponse.data.pushed_at);
+    const existingRepo = await Repo.findOne({ url: repoUrl });
+
+    if (existingRepo) { 
+      if(existingRepo.lastAnalyzed > lastPushed) {
+        return res.json({
+          message: "Repository already analyzed",
+          data: existingRepo,
+        });
+      }
+      await Repo.deleteOne({ url: repoUrl });
+    }
+
     const repoData = repoResponse.data;
 
     const commitsResponse = await axios.get(

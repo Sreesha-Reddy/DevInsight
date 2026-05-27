@@ -14,7 +14,8 @@ const RepoSchema = new Schema({
 
     url: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
     metrics: {
